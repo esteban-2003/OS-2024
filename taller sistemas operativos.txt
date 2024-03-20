@@ -1,0 +1,213 @@
+LABORATORIO 1
+
+const int pinVerde = 11; 
+const int pinRojo = 12; 
+const int pinAmarillo = 13; 
+
+int estadoVerde = LOW;
+int estadoRojo = LOW; 
+int estadoAmarillo = LOW; 
+
+void setup() {
+ 
+  pinMode(pinVerde, OUTPUT);
+  pinMode(pinRojo, OUTPUT);
+  pinMode(pinAmarillo, OUTPUT);
+
+  
+  Serial.begin(9600);
+}
+
+void loop() {
+  if (Serial.available()) {
+    char comando = Serial.read();
+
+    switch (comando) {
+      case '1':
+        estadoVerde = HIGH;
+        digitalWrite(pinVerde, HIGH);
+        break;
+
+      case '2': 
+        estadoVerde = LOW;
+        digitalWrite(pinVerde, LOW);
+        break;
+
+      case '3': 
+        estadoRojo = HIGH;
+        digitalWrite(pinRojo, HIGH);
+        break;
+
+      case '4': 
+        estadoRojo = LOW;
+        digitalWrite(pinRojo, LOW);
+        break;
+
+      case '5':
+        estadoAmarillo = HIGH;
+        digitalWrite(pinAmarillo, HIGH);
+        break;
+
+      case '6':
+        estadoAmarillo = LOW;
+        digitalWrite(pinAmarillo, LOW);
+        break;
+
+      case '7': 
+        estadoVerde = HIGH;
+        estadoRojo = HIGH;
+        estadoAmarillo = HIGH;
+        digitalWrite(pinVerde, HIGH);
+        digitalWrite(pinRojo, HIGH);
+        digitalWrite(pinAmarillo, HIGH);
+        break;
+
+      case '8': 
+        estadoVerde = LOW;
+        estadoRojo = LOW;
+        estadoAmarillo = LOW;
+        digitalWrite(pinVerde, LOW);
+        digitalWrite(pinRojo, LOW);
+        digitalWrite(pinAmarillo, LOW);
+        break;
+
+      case '9':
+ 
+        while (true) {
+        digitalWrite(pinVerde, HIGH);
+        digitalWrite(pinRojo, HIGH);
+        digitalWrite(pinAmarillo, HIGH);
+        delay(500);
+
+        digitalWrite(pinVerde, LOW);
+        digitalWrite(pinRojo, LOW);
+        digitalWrite(pinAmarillo, LOW);
+        delay(500);
+  }
+  break;
+
+    }
+  }
+}
+
+
+LABORATORIO 2
+
+const int LM35_PIN = A0;
+const int LED_PIN = 13;
+const int VENTILADOR_PIN = 10;
+
+LiquidCrystal lcd_1(12, 11, 5, 4, 3, 2);
+
+void setup() {
+  lcd_1.begin(16, 2);
+  pinMode(LM35_PIN, INPUT);
+  pinMode(LED_PIN, OUTPUT);
+  pinMode(VENTILADOR_PIN, OUTPUT);
+  Serial.begin(9600);
+}
+
+void loop() {
+  int temperature = (-40 + 0.488155 * (analogRead(LM35_PIN) - 20));
+
+  Serial.print("Temperatura: ");
+  Serial.print(temperature);
+  Serial.println(" °C");
+
+  lcd_1.setCursor(0, 0);
+  lcd_1.print("Temp: ");
+  lcd_1.print(temperature);
+  lcd_1.print(" C");
+
+  if (temperature <= 10) {
+    blinkLED(500);
+    digitalWrite(VENTILADOR_PIN, LOW);
+  } 
+  else if (temperature > 10 && temperature <= 25) {
+    digitalWrite(LED_PIN, LOW);
+    digitalWrite(VENTILADOR_PIN, LOW);
+  } 
+  else if (temperature >= 26) {
+    digitalWrite(LED_PIN, HIGH);
+    digitalWrite(VENTILADOR_PIN, HIGH);
+  }
+
+  delay(1000);
+}
+
+void blinkLED(int interval) {
+  digitalWrite(LED_PIN, HIGH);
+  delay(interval);
+  digitalWrite(LED_PIN, LOW);
+  delay(interval);
+}
+
+LABORATORIO 3
+
+#include <LiquidCrystal.h>
+
+int seconds = 0;
+const int LED=13;
+const int TMP=0;
+const int MOTOR = 10;
+float temperatura=0;
+
+
+LiquidCrystal lcd_1(12, 11, 5, 4, 3, 2);
+
+void setup()
+{
+  lcd_1.begin(16, 2);
+  pinMode(LED,OUTPUT);
+  Serial.begin(9600);
+  //lcd_1.print("hola mundo");
+}
+
+void loop()
+{  
+  
+  
+   temperatura=map(analogRead(TMP),0,1023,-50,450 );
+  
+  if(temperatura<11){
+   		digitalWrite(MOTOR,LOW);
+        digitalWrite(LED,HIGH);
+        delay(500);
+        digitalWrite(LED,LOW);
+    	delay(500);
+    	lcd_1.setCursor(1,0);
+      	Serial.print("TEMPERATURA ACTUAL = ");    	
+    	lcd_1.print("TEMPERATURA ACTUAL = ");
+    	lcd_1.setCursor(6,1);
+   		lcd_1.print(temperatura);
+        delay(500);   
+    	Serial.println(temperatura);
+    
+    
+   
+  } else if(temperatura > 11 && temperatura < 26){
+    	digitalWrite(MOTOR,LOW);
+    	digitalWrite(LED,LOW);
+    	lcd_1.setCursor(1,0);
+      	Serial.print("TEMPERATURA ACTUAL = ");    	
+    	lcd_1.print("TEMPERATURA ACTUAL = ");
+    	lcd_1.setCursor(6,1);
+   		lcd_1.print(temperatura);
+        delay(500);   
+    	Serial.println(temperatura);
+  }else if(temperatura > 25){
+   		digitalWrite(LED,HIGH);
+    	digitalWrite(MOTOR,HIGH);
+      	delay(500);
+    	lcd_1.setCursor(1,0);
+      	Serial.print("TEMPERATURA ACTUAL = ");    	
+    	lcd_1.print("TEMPERATURA ACTUAL = ");
+    	lcd_1.setCursor(6,1);
+   		lcd_1.print(temperatura);
+        delay(500);   
+    	Serial.println(temperatura);
+  }else{
+    	Serial.print("ERROR!!!! ");
+  }
+
+}
